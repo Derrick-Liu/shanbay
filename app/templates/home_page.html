@@ -1,7 +1,24 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Home</h1>
+<div>
+    <div style="text-align:center">
+        <a href="{{url_for('main.abc',id=1)}}"><p>开始背单词</p></a>
+        {% if current_user.is_authenticated %}
+        <p>单词范围：{{type}} 每日单词量：{{number}}</p>
+        <a href="{{url_for('main.set_value',username=current_user.username)}}">点击此处进行设置</a>
+        {% else %}
+        <p>单词范围：任意 每日单词量：40</p>
+        <a href="{{url_for('auth.login')}}" onclick="if(confirm('您尚未登录，进入登录页面？')==false)return false;">点击此处进行设置</a>
+        {% endif %}
+    </div>
+</div>
+<div>
+    <!--添加查询单词表单-->
+</div>
+<div>
+    <!--显示最新单词共享笔记-->
+    <!--登录用户可选择查看自己的笔记和所有笔记-->
+    <!--未登录用户仅可查看所有笔记-->
 </div>
 {% endblock %}

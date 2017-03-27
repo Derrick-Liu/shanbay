@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Shanbay-vocabulary{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{word}}</h1>
+</div>
+<div>
+    <p>单词释义：</p>
+    {% for mean in means %}
+    <P>{{ mean }}</P>
+    {% endfor %}
+</div>
+<div>
+    <p>{{times}}次出现</p>
+</div>
+
+<div>
+    {{ wtf.quick_form(form) }}
+</div>
+
+{% endblock %}
