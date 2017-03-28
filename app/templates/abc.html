@@ -6,6 +6,14 @@
 <div class="page-header">
     <h1>{{word}}</h1>
 </div>
+{% if other_forms %}
+<div>
+    <p>其他形式：</p>
+    {% for form in other_forms %}
+    <span>{{form}}</span>
+    {% endfor %}
+</div>
+{% endif %}
 <div>
     <p>单词释义：</p>
     {% for mean in means %}
@@ -17,7 +25,19 @@
 </div>
 
 <div>
+    {% if current_user.is_authenticated %}
     {{ wtf.quick_form(form) }}
+    {% else %}
+    <p><a href="{{url_for('auth.login')}}">登录</a>后添加单词笔记</p>
+{% endif %}
+</div>
+<div>
+    <a href="{{url_for('main.abc',cur_num=cur_num)}}">下一个</a>
 </div>
 
+<div class="progress">
+  <div class="progress-bar" role="progressbar"style="width: 100%;">
+      {{cur_num}}/{{day_num}}
+  </div>
+</div>
 {% endblock %}

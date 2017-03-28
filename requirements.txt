@@ -5,3 +5,4 @@ flask-moment
 flask-wtf
 flask-login
 flask-sqlalchemy
+simplejson

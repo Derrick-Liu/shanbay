@@ -3,9 +3,9 @@
 {% block page_content %}
 <div>
     <div style="text-align:center">
-        <a href="{{url_for('main.abc',id=1)}}"><p>开始背单词</p></a>
+        <a href="{{url_for('main.abc')}}"><p>开始背单词</p></a>
         {% if current_user.is_authenticated %}
-        <p>单词范围：{{type}} 每日单词量：{{number}}</p>
+        <p>单词范围：{{type_name}} 每日单词量：{{number}}</p>
         <a href="{{url_for('main.set_value',username=current_user.username)}}">点击此处进行设置</a>
         {% else %}
         <p>单词范围：任意 每日单词量：40</p>
