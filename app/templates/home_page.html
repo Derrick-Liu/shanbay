@@ -4,11 +4,10 @@
 <div>
     <div style="text-align:center">
         <a href="{{url_for('main.abc')}}"><p>开始背单词</p></a>
-        {% if current_user.is_authenticated %}
         <p>单词范围：{{type_name}} 每日单词量：{{number}}</p>
+        {% if current_user.is_authenticated %}
         <a href="{{url_for('main.set_value',username=current_user.username)}}">点击此处进行设置</a>
         {% else %}
-        <p>单词范围：任意 每日单词量：40</p>
         <a href="{{url_for('auth.login')}}" onclick="if(confirm('您尚未登录，进入登录页面？')==false)return false;">点击此处进行设置</a>
         {% endif %}
     </div>
@@ -20,5 +19,14 @@
     <!--显示最新单词共享笔记-->
     <!--登录用户可选择查看自己的笔记和所有笔记-->
     <!--未登录用户仅可查看所有笔记-->
+    <div class="note-tabs">
+        <ul class="nav nav-tabs">
+            <li {% if not show_mine %} class="active" {% endif %}><a href="{{ url_for('main.show_all') }}">所有笔记</a></li>
+            {% if current_user.is_authenticated %}
+            <li {% if show_mine %} class="active" {% endif %}><a href="{{ url_for('main.show_mine') }}">我的笔记</a></li>
+            {% endif %}
+        </ul>
+        {% include '_notes.html' %}
+    </div>
 </div>
 {% endblock %}

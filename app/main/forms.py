@@ -9,5 +9,5 @@ class SetvaluesForm(FlaskForm):
     submit=SubmitField(u'提交')
 
 class NotesForm(FlaskForm):
-    body=TextAreaField(u'写笔记',validators=[Length(0,300)])
+    body=TextAreaField(u'写笔记',validators=[Length(5,300)])
     submit=SubmitField(u'提交')

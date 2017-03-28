@@ -1,0 +1,10 @@
+{% for note in notes_list %}
+<div>
+    {% for info in note %}
+    <div class="col-md-2" style="display:inline;min-height: 24px;">
+        {{ info }}
+    </div>
+    {% endfor %}
+    <a><p class="col-md-2">点赞</p></a>
+</div>
+{% endfor %}

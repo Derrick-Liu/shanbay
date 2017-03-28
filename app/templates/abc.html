@@ -31,10 +31,15 @@
     <p><a href="{{url_for('auth.login')}}">登录</a>后添加单词笔记</p>
 {% endif %}
 </div>
+
+<div>
+    <p>共享笔记：</p>
+    {% include '_notes.html' %}
+</div>
+
 <div>
     <a href="{{url_for('main.abc',cur_num=cur_num)}}">下一个</a>
 </div>
-
 <div class="progress">
   <div class="progress-bar" role="progressbar"style="width: 100%;">
       {{cur_num}}/{{day_num}}
