@@ -14,9 +14,6 @@ class Config:
     FLASKY_MAIL_SUBJECT_PREFIX = '[Shanbay]'
     FLASKY_MAIL_SENDER = 'Shanbay Admin <liushi_Eric@163.com>'
     FLASKY_ADMIN = 'liushi_Oscar@163.com'#os.environ.get('FLASKY_ADMIN')
-    FLASKY_POSTS_PER_PAGE = 10
-    FLASKY_FOLLOWERS_PER_PAGE = 20
-    FLASKY_COMMENTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):

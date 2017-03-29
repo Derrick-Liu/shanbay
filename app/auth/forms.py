@@ -2,6 +2,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,PasswordField,BooleanField,SelectField,TextAreaField
 from wtforms.validators import DataRequired,Email,EqualTo,Length
+from wtforms import ValidationError
+import pymysql
 
 class RegisterForm(FlaskForm):
     email=StringField(u'邮箱 *',validators=[DataRequired(),Email(),Length(1,64)])
@@ -14,6 +16,41 @@ class RegisterForm(FlaskForm):
     address=StringField(u'地址',validators=[Length(0,20)])
     about_me=TextAreaField(u'自我介绍',validators=[Length(0,200)])
     submit=SubmitField(u'提交')
+
+    def validate_email(self,field):
+        conn = pymysql.connect(
+            host='127.0.0.1',
+            user='root',
+            password='lshi6060660',
+            db='shanbay',
+            charset='utf8')
+        cur = conn.cursor(cursor=pymysql.cursors.DictCursor)
+        if cur.execute('select username from users where email="%s"'%field.data):
+            cur.close()
+            conn.commit()
+            conn.close()
+            raise ValidationError(u'邮箱已被注册！')
+        cur.close()
+        conn.commit()
+        conn.close()
+
+    def validate_username(self,field):
+        conn = pymysql.connect(
+            host='127.0.0.1',
+            user='root',
+            password='lshi6060660',
+            db='shanbay',
+            charset='utf8')
+        cur = conn.cursor(cursor=pymysql.cursors.DictCursor)
+        if cur.execute('select username from users where username="%s"' % field.data):
+            cur.close()
+            conn.commit()
+            conn.close()
+            raise ValidationError(u'用户名已被注册！')
+        cur.close()
+        conn.commit()
+        conn.close()
+
 
 class LoginForm(FlaskForm):
     username=StringField(u'用户名',validators=[DataRequired()])

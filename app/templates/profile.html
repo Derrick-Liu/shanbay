@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Shanbay-{{username}}{% endblock %}
+
+{% block page_content %}
+
+
+<div class="col-md-offset-2 ">
+    <div class="page-header">
+        <h1>{{username}}</h1>
+        <p class="test-right"><em><a href="{{url_for('main.home')}}">背单词</a></em></p>
+    </div>
+    <ul>
+        <li>性别：{{ gender }}</li>
+        <li>地址：{{ address }}</li>
+        <li>生日：{{ birthday }}</li>
+        <li>英语等级：{{english_type}}</li>
+        <li>每日背单词量：{{num}}</li>
+        <li>邮箱：{{ email }}</li>
+        <li>注册时间：{{ register_time }}</li>
+        <li>自我介绍：{{ about_me }}</li>
+    </ul>
+</div>
+
+{% endblock %}

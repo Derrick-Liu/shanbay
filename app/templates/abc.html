@@ -37,6 +37,7 @@
     {% include '_notes.html' %}
 </div>
 
+{% if not search %}
 <div>
     <a href="{{url_for('main.abc',cur_num=cur_num)}}">下一个</a>
 </div>
@@ -45,4 +46,5 @@
       {{cur_num}}/{{day_num}}
   </div>
 </div>
+{% endif %}
 {% endblock %}

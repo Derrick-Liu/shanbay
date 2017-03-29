@@ -2,7 +2,7 @@
 from . import main
 from flask import render_template,redirect,url_for,request,session,make_response
 import pymysql
-from .forms import SetvaluesForm,NotesForm
+from .forms import SetvaluesForm,NotesForm,SearchForm
 from flask_login import login_required,current_user
 import random
 import simplejson
@@ -17,6 +17,17 @@ def home():
         db='shanbay',
         charset='utf8')
     cur = conn.cursor(cursor=pymysql.cursors.DictCursor)
+
+    form=SearchForm()
+    if request.method=="POST":
+        if form.validate_on_submit():
+            cur.execute('select id from words where word="%s"'%form.word.data)
+            id=int(cur.fetchone().get('id'))
+
+            cur.close()
+            conn.commit()
+            conn.close()
+            return redirect(url_for('main.abc',id=id,search=1))
 
     show_mine = bool(request.cookies.get('show_mine',''))
 
@@ -65,7 +76,7 @@ def home():
     cur.close()
     conn.commit()
     conn.close()
-    return render_template('home_page.html', type_name=type_name, number=number, show_mine=show_mine,notes_list=notes_list)
+    return render_template('home_page.html',form=form,type_name=type_name, number=number, show_mine=show_mine,notes_list=notes_list)
 
 #设置用户单词类型和每日背单词数量
 @main.route('/set_value/<username>',methods=["POST","GET"])
@@ -115,20 +126,19 @@ def abc():
     # 用于区分当前请求是提交表单之后的redirect还是普通的请求
     elif request.args.get('id'):
         id = int(request.args.get('id'))
-        day_num=session['day_num']
+        day_num =session.get('day_num', '')
+    #提交表单的post请求时，id为上个get时的id
     else:
-        #提交表单的post请求时，id为上个get时的id
         id=session['id']
-        #只有post请求且form.validate_on_submit()为False时才会用到这个数据
-        day_num = session['day_num']
+        #当post请求且validate_on_submit() 为False 时用到
+        day_num = session.get('day_num', '')
     session['id']=id
-
     #从words表中获得单词，出现次数和变化形式
     cur.execute("select word,times,exchange from words where id=%d"%id)
     info=cur.fetchone()
     word=info.get('word')                                    #单词
     times=info.get('times')                                  #出现次数
-    exchanges=simplejson.loads(info.get('exchange'))         #字典
+    exchanges=simplejson.loads(info.get('exchange'))         #变化形式，字典
     other_form=[]
     for key in exchanges:
         if exchanges[key]:                                    #键值为list
@@ -139,14 +149,16 @@ def abc():
     means_list=cur.fetchall()
     means=[u.get('means') for u in means_list]
 
-    #获取当前单词 点赞数前10条笔记内容
-    cur.execute('select body,time,word_id,agree_num from notes where word_id=%d order by agree_num desc' % id)
+    #获取当前单词 点赞数前10的笔记内容
+    cur.execute('select body,time,user_id,word_id,agree_num from notes where word_id=%d order by agree_num desc' % id)
     notes_list = cur.fetchmany(10)
     for i in range(len(notes_list)):
         note = notes_list[i]
+        cur.execute('select username from users where id=%d' % int(note.get('user_id')))
+        user_name = cur.fetchone().get('username')
         cur.execute('select word from words where id=%d' % int(note.get('word_id')))
         word_name = cur.fetchone().get('word')
-        list2 = [current_user.username, word_name, note.get('body'), note.get('agree_num'), note.get('time')]
+        list2 = [user_name, word_name, note.get('body'), note.get('agree_num'), note.get('time')]
         notes_list[i] = list2
 
     #维护当前已学习个数,用于显示进度条
@@ -172,7 +184,15 @@ def abc():
     conn.commit()
     conn.close()
 
-    return render_template('abc.html',form=form,other_forms=other_form,word=word,times=times,means=means,cur_num=cur_num,day_num=day_num,notes_list=notes_list)
+    #如是查词请求，不渲染下一个按钮和进度条
+    search=bool(request.args.get('search',''))
+
+    #进度条满时，跳转到主页
+    if int(cur_num)==int(day_num):
+        return redirect(url_for('main.home'))
+
+    return render_template('abc.html',form=form,other_forms=other_form,word=word,times=times,means=means,cur_num=cur_num,day_num=day_num,
+                           search=search,notes_list=notes_list)
 
 #首页显示所有笔记，还是登录用户的个人笔记
 @main.route('/show_all')
@@ -187,6 +207,29 @@ def show_mine():
     resp.set_cookie('show_mine','1',max_age=30*24*60*60)
     return resp
 
+@main.route('/profile/<username>')
+def profile(username):
+    conn = pymysql.connect(
+        host='127.0.0.1',
+        user='root',
+        password='lshi6060660',
+        db='shanbay',
+        charset='utf8')
+    cur = conn.cursor(cursor=pymysql.cursors.DictCursor)
+
+    cur.execute('select email,gender,birthday,address,about_me,register_time,'
+                'english_type,words_num_day from users where username="%s"'%username)
+    info=cur.fetchone()
+
+    cur.execute('select typename from type where id=%d'%int(info.get('english_type')))
+    typename=cur.fetchone().get('typename')
+
+    cur.close()
+    conn.commit()
+    conn.close()
+    return render_template('profile.html',username=username,email=info.get('email'),gender=info.get('gender',''),birthday=info.get('birthday',''),
+                           address=info.get('address',''),about_me=info.get('about_me',''),english_type=typename,num=info.get('words_num_day'),
+                           register_time=info.get('register_time'))
 # @main.route('/add_agree')
 # def add_agree():
 #     info=request.args.get('info')

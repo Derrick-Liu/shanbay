@@ -74,6 +74,7 @@ def register():
         )
         db.session.add(user)
 
+
         flash(u'您现在可以登录！')
         return redirect(url_for('.login'))
     return render_template('auth/register.html',form=form)

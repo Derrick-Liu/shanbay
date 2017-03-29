@@ -11,3 +11,8 @@ class SetvaluesForm(FlaskForm):
 class NotesForm(FlaskForm):
     body=TextAreaField(u'写笔记',validators=[Length(5,300)])
     submit=SubmitField(u'提交')
+
+class SearchForm(FlaskForm):
+    word=StringField(u'单词',validators=[DataRequired()])
+    submit=SubmitField(u'查询')
+

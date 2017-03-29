@@ -1,11 +1,6 @@
 {% extends "bootstrap/base.html" %}
 
 {% block title %}扇贝：知道你在改变{% endblock %}
-{% block scripts %}
-{{ super() }}
-{{ moment.include_moment() }}
-
-{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -31,7 +26,7 @@
         <div class="navbar-collapse collapse" style="font-family:'微软雅黑';font-size:20px;">
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.home') }}">主页</a></li>
-
+                <li><a href="{{ url_for('main.home') }}">背单词</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
@@ -39,8 +34,7 @@
                     <a class="btn btn-link dropdown-toggle" role="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         {{current_user.username}}<span class="caret"></span></a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">个人资料</a></li>
-                        <li><a href="#">编辑资料</a></li>
+                        <li><a href="{{url_for('main.profile',username=current_user.username)}}">个人资料</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="{{url_for('auth.logout')}}">退出</a></li>
                     </ul>

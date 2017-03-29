@@ -1,0 +1,6 @@
+Dear {{user.username}}
+click the following link to conform your account:
+
+{{url_for('auth.confirm',token=token,_external=True)}}
+
+Thank you!
